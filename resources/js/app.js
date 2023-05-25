@@ -15,8 +15,10 @@ import { createApp } from 'vue';
 
 const app = createApp({});
 
-import ExampleComponent from './components/ExampleComponent.vue';
-app.component('example-component', ExampleComponent);
+import CompanyManagement from './components/CompanyManagement.vue';
+import EmployeeManagement from './components/EmployeeManagement.vue';
+app.component('company-management', CompanyManagement);
+app.component('employee-management', EmployeeManagement);
 
 /**
  * The following block of code may be used to automatically register your

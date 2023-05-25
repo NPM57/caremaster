@@ -14,9 +14,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    $user = Auth::user();
+    if ($user) {
+        return view('components.company');
+    }
     return view('welcome');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/company', [App\Http\Controllers\CompanyController::class, 'index'])->name('company');
+Route::get('/employee', [App\Http\Controllers\EmployeeController::class, 'index'])->name('employee');
