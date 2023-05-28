@@ -21,7 +21,7 @@ class EmployeeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return void
      */
     public function index()
     {
