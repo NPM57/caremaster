@@ -23,6 +23,5 @@ Route::get('/', function () {
 
 Auth::routes();
 
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/company', [App\Http\Controllers\CompanyController::class, 'index'])->name('company');
-Route::get('/employee', [App\Http\Controllers\EmployeeController::class, 'index'])->name('employee');
+Route::get('/company', [App\Http\Controllers\HomeController::class, 'company'])->name('company');
+Route::get('/employee', [App\Http\Controllers\HomeController::class, 'employee'])->name('employee');
