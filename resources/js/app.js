@@ -15,10 +15,15 @@ import { createApp } from 'vue';
 
 const app = createApp({});
 
+import Antd from 'ant-design-vue';
 import CompanyManagement from './components/CompanyManagement.vue';
 import EmployeeManagement from './components/EmployeeManagement.vue';
 app.component('company-management', CompanyManagement);
 app.component('employee-management', EmployeeManagement);
+
+
+
+import 'ant-design-vue/dist/antd.css';
 
 /**
  * The following block of code may be used to automatically register your
@@ -38,4 +43,4 @@ app.component('employee-management', EmployeeManagement);
  * scaffolding. Otherwise, you will need to add an element yourself.
  */
 
-app.mount('#app');
+app.use(Antd).mount('#app');
