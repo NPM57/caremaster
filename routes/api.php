@@ -17,3 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Company API
+    Route::get('/company', [App\Http\Controllers\CompanyController::class, 'index']);
+    Route::post('/company', [App\Http\Controllers\CompanyController::class, 'store']);
+    Route::patch('/company', [App\Http\Controllers\CompanyController::class, 'update']);
+    Route::delete('/company', [App\Http\Controllers\CompanyController::class, 'destroy']);
+});
