@@ -27,6 +27,18 @@ class Company extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['logo_url'];
+
+    public function getLogoUrlAttribute(): string
+    {
+        return env('APP_URL'). '/storage/' . $this->logo;
+    }
+
+    /**
      * @return HasMany
      */
     public function employees(): HasMany
