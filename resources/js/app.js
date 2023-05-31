@@ -16,8 +16,8 @@ import { createApp } from 'vue';
 const app = createApp({});
 
 import Antd from 'ant-design-vue';
-import CompanyManagement from './components/CompanyManagement.vue';
-import EmployeeManagement from './components/EmployeeManagement.vue';
+import CompanyManagement from './components/Company/CompanyManagement.vue';
+import EmployeeManagement from './components/Employee/EmployeeManagement.vue';
 app.component('company-management', CompanyManagement);
 app.component('employee-management', EmployeeManagement);
 
