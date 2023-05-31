@@ -21,7 +21,7 @@ class EmployeeFactory extends Factory
             'last_name' => fake()->lastName(),
             'email' => fake()->email(),
             'phone' => fake()->phoneNumber(),
-            'company_id' => fake()->numberBetween(1,10), // init only 10 companies
+            'company_id' => fake()->numberBetween(1,30), // init only 30 companies
         ];
     }
 
