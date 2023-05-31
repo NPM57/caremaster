@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->timestamps();
+            $table->softDeletes();
 
             // foreign key constraint
             $table->foreignId('company_id')->constrained(

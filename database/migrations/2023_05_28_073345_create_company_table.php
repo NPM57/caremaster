@@ -18,6 +18,7 @@ return new class extends Migration
             $table->binary('logo')->nullable();
             $table->string('website')->nullable();;
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
