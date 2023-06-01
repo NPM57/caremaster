@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     // Company API
     Route::get('/company', [App\Http\Controllers\CompanyController::class, 'index']);
-    Route::post('/company', [App\Http\Controllers\CompanyController::class, 'store']);
-    Route::patch('/company', [App\Http\Controllers\CompanyController::class, 'update']);
+    Route::post('/company/create', [App\Http\Controllers\CompanyController::class, 'store']);
+    Route::post('/company/edit', [App\Http\Controllers\CompanyController::class, 'update']);
     Route::delete('/company', [App\Http\Controllers\CompanyController::class, 'destroy']);
 });

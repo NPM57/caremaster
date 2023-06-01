@@ -206,7 +206,7 @@ export default {
                 limit,
                 page,
             }
-            axios.get('/api/company', {params})
+            return axios.get('/api/company', {params})
                 .then((response) => {
                     this.isLoading = false;
                     this.data = response.data.data;
@@ -235,7 +235,7 @@ export default {
 
         handleOkForDeleteModal() {
             const params = {
-                id : this.deleteCompany.id,
+                id: this.deleteCompany.id,
             }
             axios.delete('/api/company', {params})
                 .then((response) => {
@@ -267,11 +267,44 @@ export default {
 
         handleOkForEditModal(e) {
             e.preventDefault();
-            this.isEditing = false;
-            this.showEditModal = false;
 
-            // upload file and call a request to update the selected company
-            alert('update');
+            const data = new FormData();
+            if(this.selectedCompany.name) {
+                data.set('name', this.selectedCompany.name);
+            }
+
+            if(this.selectedCompany.email) {
+                data.set('email', this.selectedCompany.email);
+            }
+
+            if(this.selectedCompany.website) {
+                data.set('website', this.selectedCompany.website);
+            }
+
+            if (this.selectedCompany.file && this.selectedCompany.fileName) {
+                data.set('logo', this.selectedCompany.file, this.selectedCompany.fileName);
+            }
+
+            if (this.selectedCompany.id) {
+                data.set('id', this.selectedCompany.id);
+
+                // PHP-Symfony does not send the FormData along with patch request
+                axios.post('/api/company/edit', data)
+                    .then((response) => {
+                        this.getCompanies();
+                        this.selectedCompany = {};
+                        message.success(response.data.message, 3);
+                        this.isEditing = false;
+                        this.showEditModal = false;
+                    })
+                    .catch((error) => {
+                        message.error(error.message, 3);
+                    });
+            } else {
+                message.error('The selected company does not have associated id - reloading the list of appropriate companies', 3);
+                this.getCompanies();
+            }
+
         },
 
         handleLogoValidation(file) {
@@ -334,7 +367,7 @@ export default {
                 data.set('logo', this.newCompany.file, this.newCompany.fileName);
             }
 
-            axios.post('/api/company', data)
+            axios.post('/api/company/create', data)
                 .then((response) => {
                     this.getCompanies();
                     this.newCompany = {};
@@ -343,7 +376,6 @@ export default {
                     this.showCreateModal = false;
                 })
                 .catch((error) => {
-                    this.newCompany = {};
                     message.error(error.message, 3);
                 });
         },
