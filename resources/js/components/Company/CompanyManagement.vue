@@ -17,9 +17,9 @@
                 <a-avatar :src="record.logo_url"/>
             </template>
             <template v-if="column.key === 'action'">
-              <a-button @click="handleEdit(record.id)">Edit</a-button>
-                <a-divider type="vertical" />
-              <a-button @click="handleDelete(record.id)">Delete</a-button>
+                <a-button @click="handleEdit(record.id)">Edit</a-button>
+                <a-divider type="vertical"/>
+                <a-button @click="handleDelete(record.id)">Delete</a-button>
             </template>
         </template>
     </a-table>
@@ -29,19 +29,20 @@
         title="Editing"
         :confirm-loading="isEditing"
         :ok-button-props="{disabled: logoErrorUploading}"
+        ok-text="Update"
         @close="handleCancelForEditModal"
         @cancel="handleCancelForEditModal"
         @ok="handleOkForEditModal"
     >
         <a-form layout="horizontal" :label-col="{ style: { width: '150px' } }" :wrapper-col=" { span: 14 }">
-            <a-form-item label="Name">
-                <a-input v-model:value="selectedCompany.name" placeholder="input placeholder" />
+            <a-form-item label="Name" required>
+                <a-input v-model:value="selectedCompany.name" placeholder="Name is required"/>
             </a-form-item>
-            <a-form-item label="Email">
-                <a-input v-model:value="selectedCompany.email" placeholder="input placeholder" />
+            <a-form-item label="Email" required>
+                <a-input v-model:value="selectedCompany.email" placeholder="Email is required"/>
             </a-form-item>
             <a-form-item label="Website">
-                <a-input v-model:value="selectedCompany.website" placeholder="input placeholder" />
+                <a-input v-model:value="selectedCompany.website" placeholder="Example format http://url.com"/>
             </a-form-item>
             <a-form-item label="Logo">
                 <a-avatar :src="selectedCompany.logo_url"/>
@@ -70,19 +71,20 @@
         title="Create new company"
         :confirm-loading="isCreating"
         :ok-button-props="{disabled: logoErrorUploadingCreate}"
+        ok-text="Create"
         @close="handleCancelForCreateModal"
         @cancel="handleCancelForCreateModal"
         @ok="handleOkForCreateModal"
     >
         <a-form layout="horizontal" :label-col="{ style: { width: '150px' } }" :wrapper-col=" { span: 14 }">
-            <a-form-item label="Name">
-                <a-input v-model:value="newCompany.name" placeholder="input placeholder" />
+            <a-form-item label="Name" required>
+                <a-input v-model:value="newCompany.name" placeholder="Name is required"/>
             </a-form-item>
-            <a-form-item label="Email">
-                <a-input v-model:value="newCompany.email" placeholder="input placeholder" />
+            <a-form-item label="Email" required>
+                <a-input v-model:value="newCompany.email" placeholder="Email is required"/>
             </a-form-item>
             <a-form-item label="Website">
-                <a-input v-model:value="newCompany.website" placeholder="input placeholder" />
+                <a-input v-model:value="newCompany.website" placeholder="Example format http://url.com"/>
             </a-form-item>
             <a-form-item label="Logo">
                 <a-upload
@@ -107,32 +109,33 @@
         v-model:visible="showDeleteModal"
         title="Delete confirmation"
         :confirm-loading="isDeleting"
+        ok-text="Delete"
         @ok="handleOkForDeleteModal"
     >
         <a-form layout="horizontal" :label-col="{ style: { width: '150px' } }" :wrapper-col=" { span: 14 }">
             <a-form-item label="Name">
-                <a-input v-model:value="deleteCompany.name" disabled placeholder="input placeholder" />
+                <a-input v-model:value="deleteCompany.name" disabled/>
             </a-form-item>
             <a-form-item label="Email">
-                <a-input v-model:value="deleteCompany.email" disabled placeholder="input placeholder" />
+                <a-input v-model:value="deleteCompany.email" disabled/>
             </a-form-item>
             <a-form-item label="Website">
-                <a-input v-model:value="deleteCompany.website" disabled placeholder="input placeholder" />
+                <a-input v-model:value="deleteCompany.website" disabled/>
             </a-form-item>
             <a-form-item label="Logo">
                 <a-avatar :src="deleteCompany.logo_url"/>
             </a-form-item>
         </a-form>
-        <p style="font-weight: bold; color: red">Are you sure you want to delete this Company? - All employees belong to this company will also be deleted from the system!!</p>
+        <p style="font-weight: bold; color: red">Are you sure you want to delete this Company? - All employees belong to
+            this company will also be deleted from the system!!</p>
     </a-modal>
 </template>
 <script>
 import axios from 'axios';
-import {message, Upload} from "ant-design-vue";
+import {message, Upload, notification} from "ant-design-vue";
 
 export default {
-    components: {
-    },
+    components: {},
     data() {
         return {
             isLoading: false,
@@ -174,7 +177,7 @@ export default {
             limit: 10,
             selectedCompany: {},
             newCompany: {},
-            deleteCompany:{},
+            deleteCompany: {},
             showEditModal: false,
             showCreateModal: false,
             showDeleteModal: false,
@@ -269,15 +272,25 @@ export default {
             e.preventDefault();
 
             const data = new FormData();
-            if(this.selectedCompany.name) {
+            if (this.selectedCompany.name) {
                 data.set('name', this.selectedCompany.name);
+            } else {
+                return notification.error({
+                    message: 'Form validation failed',
+                    description: 'Company name is required.',
+                })
             }
 
-            if(this.selectedCompany.email) {
+            if (this.selectedCompany.email) {
                 data.set('email', this.selectedCompany.email);
+            } else {
+                return notification.error({
+                    message: 'Form validation failed',
+                    description: 'Company email is required.',
+                })
             }
 
-            if(this.selectedCompany.website) {
+            if (this.selectedCompany.website) {
                 data.set('website', this.selectedCompany.website);
             }
 
@@ -351,15 +364,25 @@ export default {
             e.preventDefault();
             // upload file and call a request to update the selected company
             const data = new FormData();
-            if(this.newCompany.name) {
+            if (this.newCompany.name) {
                 data.set('name', this.newCompany.name);
+            } else {
+                return notification.error({
+                    message: 'Form validation failed',
+                    description: 'Company name is required.',
+                })
             }
 
-            if(this.newCompany.email) {
+            if (this.newCompany.email) {
                 data.set('email', this.newCompany.email);
+            } else {
+                return notification.error({
+                    message: 'Form validation failed',
+                    description: 'Company email is required.',
+                })
             }
 
-            if(this.newCompany.website) {
+            if (this.newCompany.website) {
                 data.set('website', this.newCompany.website);
             }
 

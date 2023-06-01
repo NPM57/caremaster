@@ -77,7 +77,7 @@ class CompanyController extends Controller
         Validator::make($request->all(), [
             'id' => 'required|int',
             'name' => 'required|string',
-            'email' => 'required|email|unique:company,email,'. $request->id,
+            'email' => 'required|email|unique:company,email,' . $request->id,
             'website' => 'nullable|url',
             'logo' => 'nullable|image|mimes:png',
         ])->validate();
