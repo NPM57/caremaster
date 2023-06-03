@@ -25,6 +25,7 @@
     </a-table>
 
     <a-modal
+        v-if="showEditModal"
         v-model:visible="showEditModal"
         title="Editing"
         :confirm-loading="isEditing"
@@ -67,6 +68,7 @@
     </a-modal>
 
     <a-modal
+        v-if="showCreateModal"
         v-model:visible="showCreateModal"
         title="Create new company"
         :confirm-loading="isCreating"
@@ -106,6 +108,7 @@
     </a-modal>
 
     <a-modal
+        v-if="showDeleteModal"
         v-model:visible="showDeleteModal"
         title="Delete confirmation"
         :confirm-loading="isDeleting"
@@ -189,7 +192,7 @@ export default {
         }
     },
     created() {
-        this.getCompanies();
+        this.getCompanies(this.limit);
     },
 
     computed: {
@@ -218,11 +221,12 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    console.log(error);
+                    message.error(error.message, 3);
                 });
         },
 
         handleTableChange(e) {
+            this.limit = e.pageSize;
             this.getCompanies(this.limit, e.current);
         },
 
@@ -242,14 +246,13 @@ export default {
             }
             axios.delete('/api/company', {params})
                 .then((response) => {
-                    this.getCompanies();
+                    this.getCompanies(this.limit);
                     this.deleteCompany = {};
                     message.success(response.data.message, 3);
                     this.isDeleting = false
                     this.showDeleteModal = false;
                 })
                 .catch((error) => {
-                    this.deleteCompany = {};
                     message.error(error.message, 3);
                 });
         },
@@ -304,7 +307,7 @@ export default {
                 // PHP-Symfony does not send the FormData along with patch request
                 axios.post('/api/company/edit', data)
                     .then((response) => {
-                        this.getCompanies();
+                        this.getCompanies(this.limit);
                         this.selectedCompany = {};
                         message.success(response.data.message, 3);
                         this.isEditing = false;
@@ -315,7 +318,7 @@ export default {
                     });
             } else {
                 message.error('The selected company does not have associated id - reloading the list of appropriate companies', 3);
-                this.getCompanies();
+                this.getCompanies(this.limit);
             }
 
         },
@@ -392,7 +395,7 @@ export default {
 
             axios.post('/api/company/create', data)
                 .then((response) => {
-                    this.getCompanies();
+                    this.getCompanies(this.limit);
                     this.newCompany = {};
                     message.success(response.data.message, 3);
                     this.isCreating = false;
