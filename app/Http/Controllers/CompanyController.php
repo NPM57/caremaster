@@ -75,7 +75,7 @@ class CompanyController extends Controller
     public function update(Request $request)
     {
         Validator::make($request->all(), [
-            'id' => 'required|int',
+            'id' => 'required|int|exists:company,id',
             'name' => 'required|string',
             'email' => 'required|email|unique:company,email,' . $request->id,
             'website' => 'nullable|url',
@@ -85,12 +85,6 @@ class CompanyController extends Controller
         try {
             $editCompany = Company::find($request->id);
             $oldLogoPath = $editCompany->logo;
-            if (!$editCompany) {
-                return response()->json([
-                    'message' => 'The selected company cannot be found - update has failed!'
-                ], 422);
-            }
-
             if ($request->hasFile('logo')) {
                 $logo = $request->file('logo');
                 $filename = time() . '_' . $logo->getClientOriginalName();
@@ -126,7 +120,7 @@ class CompanyController extends Controller
     public function destroy(Request $request)
     {
         Validator::make($request->all(), [
-            'id' => 'required|int',
+            'id' => 'required|int|exists:company,id',
         ])->validate();
 
         try {
