@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Employee;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -21,19 +23,21 @@ class EmployeeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return void
+     * @return LengthAwarePaginator
      */
-    public function index()
+    public function index(Request $request)
     {
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Employee::with(['company' => function ($q) {
+            $q->select(
+                'id', 'logo', 'name', 'website', 'email'
+            );
+        }])
+            ->paginate(
+                $request->limit,
+                ['id', 'first_name', 'last_name', 'email', 'phone', 'company_id'],
+                'page',
+                $request->page
+            );
     }
 
     /**
@@ -41,38 +45,85 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        Validator::make($request->all(), [
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'nullable|email|unique:employee,email',
+            'phone' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'company_id' => 'required|numeric|exists:company,id',
+        ])->validate();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $company)
-    {
-        //
-    }
+        try {
+            $newEmployee = new Employee;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $company)
-    {
-        //
+            $newEmployee->first_name = $request->first_name;
+            $newEmployee->last_name = $request->last_name;
+            $newEmployee->email = $request->email;
+            $newEmployee->phone = $request->phone;
+            $newEmployee->company_id = $request->company_id;
+            $newEmployee->save();
+
+            return response()->json([
+                'message' => 'An employee has been created successfully'
+            ], 201);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ], $exception->getStatusCode());
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Employee $company)
+    public function update(Request $request)
     {
-        //
+        Validator::make($request->all(), [
+            'id' => 'required|int|exists:employee,id',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'nullable|email|unique:employee,email,' . $request->id,
+            'phone' => 'nullable|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'company_id' => 'nullable|numeric|exists:company,id',
+        ])->validate();
+
+        try {
+            $editEmployee = Employee::find($request->id);
+            $editEmployee->first_name = $request->first_name;
+            $editEmployee->last_name = $request->last_name;
+            $editEmployee->email = $request->email;
+            $editEmployee->phone = $request->phone;
+            $editEmployee->company_id = $request->company_id;
+            $editEmployee->save();
+
+            return response()->json([
+                'message' => 'The selected employee has been updated successfully'
+            ], 201);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ], $exception->getStatusCode());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Employee $company)
+    public function destroy(Request $request)
     {
-        //
+        Validator::make($request->all(), [
+            'id' => 'required|int|exists:employee,id',
+        ])->validate();
+
+        try {
+            Employee::whereId($request->get('id'))->delete();
+            return response()->json([
+                'message' => 'The selected company has been deleted'
+            ], 200);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ], $exception->getStatusCode());
+        }
     }
 }
