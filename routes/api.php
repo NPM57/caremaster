@@ -25,4 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/company/create', [App\Http\Controllers\CompanyController::class, 'store']);
     Route::post('/company/edit', [App\Http\Controllers\CompanyController::class, 'update']);
     Route::delete('/company', [App\Http\Controllers\CompanyController::class, 'destroy']);
+
+    // Employee API
+    Route::get('/employee', [App\Http\Controllers\EmployeeController::class, 'index']);
+    Route::post('/employee/create', [App\Http\Controllers\EmployeeController::class, 'store']);
+    Route::post('/employee/edit', [App\Http\Controllers\EmployeeController::class, 'update']);
+    Route::delete('/employee', [App\Http\Controllers\EmployeeController::class, 'destroy']);
 });
