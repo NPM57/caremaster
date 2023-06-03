@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "ant-design-vue": "^3.2.20",
+        "lodash": "^4.17.21",
         "vue-request": "^1.2.4"
     }
 }
