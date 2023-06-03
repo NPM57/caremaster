@@ -29,7 +29,13 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        return Company::paginate($request->limit, ['*'], 'page', $request->page);
+        $query = Company::query();
+        $search = $request->query('search');
+        if ($search) {
+            // simple where here or another scope, whatever you like
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        return $query->paginate($request->limit, ['id', 'email', 'logo', 'name', 'website'], 'page', $request->page);
     }
 
     /**
@@ -135,6 +141,5 @@ class CompanyController extends Controller
                 'message' => $exception->getMessage()
             ], $exception->getStatusCode());
         }
-
     }
 }
