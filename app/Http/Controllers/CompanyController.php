@@ -37,6 +37,7 @@ class CompanyController extends Controller
             // simple where here or another scope, whatever you like
             $query->where('name', 'like', '%' . $search . '%');
         }
+        $query->orderBy('id','desc');
         return $query->paginate($request->limit, ['id', 'email', 'logo', 'name', 'website'], 'page', $request->page);
     }
 

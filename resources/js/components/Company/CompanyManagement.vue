@@ -221,7 +221,7 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 
@@ -253,7 +253,7 @@ export default {
                     this.showDeleteModal = false;
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 
@@ -314,7 +314,7 @@ export default {
                         this.showEditModal = false;
                     })
                     .catch((error) => {
-                        message.error(error.message, 3);
+                        message.error(error.response.data.message, 3);
                     });
             } else {
                 message.error('The selected company does not have associated id - reloading the list of appropriate companies', 3);
@@ -402,7 +402,7 @@ export default {
                     this.showCreateModal = false;
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 

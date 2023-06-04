@@ -133,16 +133,16 @@
     >
         <a-form layout="horizontal" :label-col="{ style: { width: '150px' } }" :wrapper-col=" { span: 14 }">
             <a-form-item label="First Name" required>
-                <a-input v-model:value="deleteEmployee.first_name" placeholder="First name is required"/>
+                <a-input v-model:value="deleteEmployee.first_name" placeholder="First name is required" disabled/>
             </a-form-item>
             <a-form-item label="Last Name" required>
-                <a-input v-model:value="deleteEmployee.last_name" placeholder="Last name is required"/>
+                <a-input v-model:value="deleteEmployee.last_name" placeholder="Last name is required" disabled/>
             </a-form-item>
             <a-form-item label="Email">
-                <a-input v-model:value="deleteEmployee.email" placeholder="Email address"/>
+                <a-input v-model:value="deleteEmployee.email" placeholder="Email address" disabled/>
             </a-form-item>
             <a-form-item label="Phone">
-                <a-input v-model:value="deleteEmployee.phone" placeholder="Phone number"/>
+                <a-input v-model:value="deleteEmployee.phone" placeholder="Phone number" disabled/>
             </a-form-item>
             <a-form-item label="Company">
                 <a-input v-model:value="deleteEmployee.company.name" placeholder="Company name" disabled/>
@@ -251,7 +251,7 @@ export default {
                 })
                 .catch((error) => {
                     this.isLoading = false;
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 
@@ -284,7 +284,7 @@ export default {
                     this.showDeleteModal = false;
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 
@@ -352,7 +352,7 @@ export default {
                         this.searchValueEdit = null;
                     })
                     .catch((error) => {
-                        message.error(error.message, 3);
+                        message.error(error.response.data.message, 3);
                     });
             } else {
                 message.error('The selected employee does not have associated id - reloading the list of appropriate employees', 3);
@@ -408,6 +408,11 @@ export default {
             // New company id
             if (this.searchValueCreate) {
                 data.set('company_id', this.searchValueCreate);
+            } else {
+                return notification.error({
+                    message: 'Form validation failed',
+                    description: 'Employee must be assigned to a company.',
+                })
             }
 
             axios.post('/api/employee/create', data)
@@ -419,7 +424,7 @@ export default {
                     this.searchValueCreate = null;
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 });
         },
 
@@ -444,7 +449,7 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 })
                 .finally(() => {
                     this.isLoadingSearchEdit = false;
@@ -467,7 +472,7 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    message.error(error.message, 3);
+                    message.error(error.response.data.message, 3);
                 })
                 .finally(() => {
                     this.isLoadingSearchCreate = false;

@@ -32,6 +32,7 @@ class EmployeeController extends Controller
                 'id', 'logo', 'name', 'website', 'email'
             );
         }])
+            ->orderBy('id','desc')
             ->paginate(
                 $request->limit,
                 ['id', 'first_name', 'last_name', 'email', 'phone', 'company_id'],
