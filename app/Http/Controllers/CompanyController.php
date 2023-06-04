@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewCompanyNotification;
 use App\Models\Company;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -64,6 +66,7 @@ class CompanyController extends Controller
             $newCompany->website = $request->website;
             $newCompany->save();
 
+            Mail::to('admin@admin.com')->send(new NewCompanyNotification($newCompany));
             return response()->json([
                 'message' => 'A company has been created successfully'
             ], 201);
