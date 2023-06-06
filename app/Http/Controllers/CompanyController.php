@@ -57,8 +57,9 @@ class CompanyController extends Controller
             $newCompany = new Company;
             if ($request->hasFile('logo')) {
                 $logo = $request->file('logo');
-                $filename = time() . '_' . $logo->getClientOriginalName();
-                Image::make($logo)->resize(100, 100)->save(storage_path('/app/public/' . $filename));
+                $hashWithoutExtension = substr($logo->hashName(), 0, strpos($logo->hashName(), '.'));
+                $filename = $hashWithoutExtension . '_' . $logo->getClientOriginalName();
+                Image::make($logo)->resize(100, 100)->save(Storage::disk('public')->path($filename));
                 $newCompany->logo = $filename;
             };
 
@@ -69,7 +70,8 @@ class CompanyController extends Controller
 
             Mail::to('admin@admin.com')->send(new NewCompanyNotification($newCompany));
             return response()->json([
-                'message' => 'A company has been created successfully'
+                'message' => 'A company has been created successfully',
+                'new_company_id' => $newCompany->id,
             ], 201);
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             return response()->json([
@@ -97,8 +99,9 @@ class CompanyController extends Controller
             $oldLogoPath = $editCompany->logo;
             if ($request->hasFile('logo')) {
                 $logo = $request->file('logo');
-                $filename = time() . '_' . $logo->getClientOriginalName();
-                Image::make($logo)->resize(100, 100)->save(storage_path('/app/public/' . $filename));
+                $hashWithoutExtension = substr($logo->hashName(), 0, strpos($logo->hashName(), '.'));
+                $filename = $hashWithoutExtension . '_' . $logo->getClientOriginalName();
+                Image::make($logo)->resize(100, 100)->save(Storage::disk('public')->path($filename));
                 $editCompany->logo = $filename;
             };
 
@@ -109,13 +112,14 @@ class CompanyController extends Controller
 
             // Remove old logo if new logo has been saved
             if ($request->hasFile('logo')) {
-                if (Storage::exists('/public/' . $oldLogoPath)) {
-                    Storage::delete('/public/' . $oldLogoPath);
+                if (Storage::disk('public')->exists($oldLogoPath)) {
+                    Storage::disk('public')->delete($oldLogoPath);
                 }
             }
 
             return response()->json([
-                'message' => 'The selected company has been updated successfully'
+                'message' => 'The selected company has been updated successfully',
+                'updated_company_id' => $editCompany->id,
             ], 201);
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             return response()->json([

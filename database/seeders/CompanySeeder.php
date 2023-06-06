@@ -12,6 +12,13 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-         Company::factory(30)->create();
+        $limit = 30;
+
+        for ($i = 0; $i < $limit; $i++) {
+            Company::factory()
+                ->create([
+                    'logo' => fake()->image('public/storage', 100, 100, null, false)
+                ]);
+        }
     }
 }
