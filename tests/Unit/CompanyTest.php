@@ -137,6 +137,8 @@ class CompanyTest extends TestCase
         Sanctum::actingAs($user);
 
         $response = $this->postJson('/api/company/create', $newCompanyData);
+        $response->assertStatus(Response::HTTP_CREATED);
+
         $newCompany = Company::find($response->json()['new_company_id'])->first();
         $this->assertEquals($newCompany->name, $newCompanyData['name']);
         $this->assertEquals($newCompany->email, $newCompanyData['email']);
@@ -169,7 +171,8 @@ class CompanyTest extends TestCase
             'website' => 'http://test.com',
         ];
 
-        $response = $this->postJson('/api/company/create', $newCompanyData);
+        $responseCreate = $this->postJson('/api/company/create', $newCompanyData);
+        $responseCreate->assertStatus(Response::HTTP_CREATED);
         Storage::disk('public')->assertExists($createImageHashWithoutExtension . '_' . $newPhotoName);
 
         // Prepare data to update
@@ -178,7 +181,7 @@ class CompanyTest extends TestCase
 
         $hashWithoutExtension = substr($image->hashName(), 0, strpos($image->hashName(), '.'));
         $editCompanyData = [
-            'id' => $response->json()['new_company_id'],
+            'id' => $responseCreate->json()['new_company_id'],
             'name' => 'edited',
             'email' => 'edited@gmail.com',
             'logo' => $image,
@@ -186,6 +189,7 @@ class CompanyTest extends TestCase
         ];
 
         $response = $this->postJson('/api/company/edit', $editCompanyData);
+        $response->assertStatus(Response::HTTP_CREATED);
         $editedCompany = Company::find($response->json()['updated_company_id'])->first();
         $this->assertEquals($editedCompany->name, $editCompanyData['name']);
         $this->assertEquals($editedCompany->email, $editCompanyData['email']);
@@ -214,7 +218,8 @@ class CompanyTest extends TestCase
 
         $this->assertEquals(Company::all()->count(), 1);
 
-        $this->deleteJson('/api/company/', $deleteCompanyData);
+        $response = $this->deleteJson('/api/company/', $deleteCompanyData);
+        $response->assertStatus(Response::HTTP_OK);
         $this->assertEquals(Company::all()->count(), 0);
     }
 }
