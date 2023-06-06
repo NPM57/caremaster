@@ -2,10 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Mail\NewCompanyNotification;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Symfony\Component\HttpFoundation\Response;
@@ -115,6 +117,8 @@ class CompanyTest extends TestCase
 
     public function test_create_company()
     {
+        // Fake Mail
+        Mail::fake();
         // Fake Storage
         Storage::fake('public');
 
@@ -138,6 +142,8 @@ class CompanyTest extends TestCase
 
         $response = $this->postJson('/api/company/create', $newCompanyData);
         $response->assertStatus(Response::HTTP_CREATED);
+
+        Mail::assertSent(NewCompanyNotification::class);
 
         $newCompany = Company::find($response->json()['new_company_id'])->first();
         $this->assertEquals($newCompany->name, $newCompanyData['name']);
