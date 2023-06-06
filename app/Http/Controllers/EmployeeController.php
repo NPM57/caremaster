@@ -65,7 +65,8 @@ class EmployeeController extends Controller
             $newEmployee->save();
 
             return response()->json([
-                'message' => 'An employee has been created successfully'
+                'message' => 'An employee has been created successfully',
+                'new_employee_id' => $newEmployee->id,
             ], 201);
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             return response()->json([
@@ -98,7 +99,8 @@ class EmployeeController extends Controller
             $editEmployee->save();
 
             return response()->json([
-                'message' => 'The selected employee has been updated successfully'
+                'message' => 'The selected employee has been updated successfully',
+                'updated_employee_id' => $editEmployee->id,
             ], 201);
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             return response()->json([
